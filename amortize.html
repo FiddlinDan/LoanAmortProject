@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Amortize.js</title>
+<!-- 2014-11-04 Tue 08:29 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Peter Moresi" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/bigblow/css/hideshow.css"/>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/bigblow.js"></script>
+<script type="text/javascript" src="http://www.pirilampo.org/styles/bigblow/js/hideshow.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Amortize.js</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. About this program&#xa0;&#xa0;&#xa0;<span class="tag"><span class="info">info</span></span></a></li>
+<li><a href="#sec-2">2. Source Code&#xa0;&#xa0;&#xa0;<span class="tag"><span class="code">code</span></span></a>
+<ul>
+<li><a href="#sec-2-1">2.1. Calculate Payment</a></li>
+<li><a href="#sec-2-2">2.2. Calculate Schedule</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Tests&#xa0;&#xa0;&#xa0;<span class="tag"><span class="code">code</span></span></a>
+<ul>
+<li><a href="#sec-3-1">3.1. Should be 297.47</a></li>
+<li><a href="#sec-3-2">3.2. Should be 2245.22</a></li>
+<li><a href="#sec-3-3">3.3. Generate Schedule</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> About this program&#xa0;&#xa0;&#xa0;<span class="tag"><span class="info">info</span></span></h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This is a <a href="http://orgmode.org/worg/org-contrib/babel/">literate program</a> authored in <a href="http://www.org-mode.org">org-mode</a>.
+</p>
+
+<p>
+The program generate a JavaScript file called <a href="./amortize.js">amortize.js</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Source Code&#xa0;&#xa0;&#xa0;<span class="tag"><span class="code">code</span></span></h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The source code is written JavaScript; and implements:
+</p>
+
+<table id="functions" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">function name</th>
+<th scope="col" class="left">purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><a href="#sec-2-1">pmt</a></td>
+<td class="left">Calculate amortized payment</td>
+</tr>
+
+<tr>
+<td class="left"><a href="#sec-2-2">compute-schedule</a></td>
+<td class="left">Computes amortization schedule as multi-dimensional array</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Calculate Payment</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The function 'pmt' computes the payment amount for a loan.
+</p>
+
+<p>
+The function accepts arguments:
+</p>
+
+<table id="pmt-args" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">name</th>
+<th scope="col" class="left">comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">rate</td>
+<td class="left">is the interest rate for the loan.</td>
+</tr>
+
+<tr>
+<td class="left">nper</td>
+<td class="left">is the total number of payments for the loan.</td>
+</tr>
+
+<tr>
+<td class="left">pv</td>
+<td class="left">is the present value, or the total amount that a series of future payments is worth now; also known as the principal.</td>
+</tr>
+</tbody>
+</table>
+
+<ol class="org-ol">
+<li>The function signature:
+<div class="org-src-container">
+
+<pre class="src src-js" id="define-pmt">pmt(rate,nper,pv)
+</pre>
+</div>
+</li>
+<li>In order to calculate the payment we need to first calculate the Present Value Interest Factor (PVIF).o
+<div class="org-src-container">
+
+<pre class="src src-js" id="calculate-pvif">pvif = Math.pow( 1 + rate, nper);
+</pre>
+</div>
+</li>
+<li>Using the PVIF we can calculate the payment.
+<div class="org-src-container">
+
+<pre class="src src-js" id="calculate-pmt">pmt = rate / (pvif - 1) * -(pv * pvif);
+</pre>
+</div>
+</li>
+<li>Finally, the sections are combined into a function.
+<div class="org-src-container">
+
+<pre class="src src-js" id="pmt">function pmt(rate,nper,pv) {
+    var pvif, pmt;
+
+    pvif = Math.pow( 1 + rate, nper);
+    pmt = rate / (pvif - 1) * -(pv * pvif);   
+
+    return pmt;
+};
+</pre>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Calculate Schedule</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The 'computeSchedule' function to compute amortization schedule is named 'computeSchedule'.
+</p>
+
+<p>
+The function accepts arguments:
+</p>
+
+<table id="compute-schedule-args" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">name</th>
+<th scope="col" class="left">comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">loan_amount</td>
+<td class="left">is the amount borrowed to purchase the property.</td>
+</tr>
+
+<tr>
+<td class="left">interest_rate</td>
+<td class="left">is the percentage used to calculate interest due.</td>
+</tr>
+
+<tr>
+<td class="left">payments_per_year</td>
+<td class="left">is the number of payments made in a calendar year.</td>
+</tr>
+
+<tr>
+<td class="left">years</td>
+<td class="left">is the number of years.</td>
+</tr>
+
+<tr>
+<td class="left">payment</td>
+<td class="left">is the amount of the payment each period.</td>
+</tr>
+</tbody>
+</table>
+
+<ol class="org-ol">
+<li>The function signature is:
+<div class="org-src-container">
+
+<pre class="src src-js" id="define-compute-schedule">computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment)
+</pre>
+</div>
+</li>
+<li>Define an array to capture the schedule.
+<div class="org-src-container">
+
+<pre class="src src-js" id="define-schedule-array">var schedule = [];
+</pre>
+</div>
+</li>
+<li>Define a variable to track the remaining balance.
+<div class="org-src-container">
+
+<pre class="src src-js" id="define-remaining-balance">var remaining = loan_amount;
+</pre>
+</div>
+</li>
+<li>Compute the total number of payments.
+<div class="org-src-container">
+
+<pre class="src src-js" id="compute-number-of-payments">var number_of_payments = payments_per_year * years;
+</pre>
+</div>
+</li>
+<li>Loop through all of the periods and capture the entries in the schedule.
+<div class="org-src-container">
+
+<pre class="src src-js" id="loop-schedule">for (var i=0; i&lt;=number_of_payments; i++) {
+    var interest = remaining * (interest_rate/100/payments_per_year);
+    var principle = (payment-interest);
+    var row = [i, principle&gt;0?principle:0, interest&gt;0?interest:0, remaining&gt;0?remaining:0];
+    schedule.push(row);
+    remaining -= principle
+}
+</pre>
+</div>
+</li>
+<li>Finally, the sections are combined into a function.
+<div class="org-src-container">
+
+<pre class="src src-js" id="compute-schedule">function computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment) {
+    var schedule = [];
+    var remaining = loan_amount;
+    var number_of_payments = payments_per_year * years;
+
+    for (var i=0; i&lt;=number_of_payments; i++) {
+        var interest = remaining * (interest_rate/100/payments_per_year);
+        var principle = (payment-interest);
+        var row = [i, principle&gt;0?principle:0, interest&gt;0?interest:0, remaining&gt;0?remaining:0];
+        schedule.push(row);
+        remaining -= principle
+    }
+
+    return schedule;
+}
+</pre>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Tests&#xa0;&#xa0;&#xa0;<span class="tag"><span class="code">code</span></span></h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Should be 297.47</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+
+<pre class="src src-js" id="run-pmt">function pmt(rate,nper,pv) {
+    var pvif, pmt;
+
+    pvif = Math.pow( 1 + rate, nper);
+    pmt = rate / (pvif - 1) * -(pv * pvif);   
+
+    return pmt;
+};
+
+console.log('loan_amount: ' + loan_amount);
+console.log('interest_rate: ' + interest_rate);
+console.log('payments_per_year: ' + payments_per_year);
+console.log('years: ' + years);
+console.log( "The calculated payment is: " + 
+             pmt(interest_rate/100/payments_per_year, payments_per_year * years, -loan_amount)
+             .toFixed(2) );
+</pre>
+</div>
+
+<pre class="example">
+loan_amount: 10000
+interest_rate: 4.5
+payments_per_year: 12
+years: 3
+The calculated payment is: 297.47
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Should be 2245.22</h3>
+<div class="outline-text-3" id="text-3-2">
+<pre class="example">
+loan_amount: 500000
+interest_rate: 3.5
+payments_per_year: 12
+years: 30
+The calculated payment is: 2245.22
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Generate Schedule</h3>
+<div class="outline-text-3" id="text-3-3">
+<div class="org-src-container">
+
+<pre class="src src-js" id="run-compute-schedule">function computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment) {
+    var schedule = [];
+    var remaining = loan_amount;
+    var number_of_payments = payments_per_year * years;
+
+    for (var i=0; i&lt;=number_of_payments; i++) {
+        var interest = remaining * (interest_rate/100/payments_per_year);
+        var principle = (payment-interest);
+        var row = [i, principle&gt;0?principle:0, interest&gt;0?interest:0, remaining&gt;0?remaining:0];
+        schedule.push(row);
+        remaining -= principle
+    }
+
+    return schedule;
+}
+
+console.log('loan_amount: ' + loan_amount);
+console.log('interest_rate: ' + interest_rate);
+console.log('payments_per_year: ' + payments_per_year);
+console.log('years: ' + years);
+console.log('payment: ' + payment);
+console.log( JSON.stringify(
+    computeSchedule(loan_amount, interest_rate, payments_per_year, years, payment), 0, 4
+))
+</pre>
+</div>
+
+<pre class="example">
+loan_amount: 10000
+interest_rate: 4.5
+payments_per_year: 12
+years: 3
+payment: 297.47
+[
+    [
+        0,
+        259.97,
+        37.5,
+        10000
+    ],
+    [
+        1,
+        260.94488750000005,
+        36.5251125,
+        9740.03
+    ],
+    [
+        2,
+        261.92343082812505,
+        35.546569171875,
+        9479.0851125
+    ],
+    [
+        3,
+        262.9056436937305,
+        34.56435630626953,
+        9217.161681671876
+    ],
+    [
+        4,
+        263.89153985758196,
+        33.578460142418045,
+        8954.256037978146
+    ],
+    [
+        5,
+        264.8811331320479,
+        32.58886686795211,
+        8690.364498120563
+    ],
+    [
+        6,
+        265.8744373812931,
+        31.59556261870693,
+        8425.483364988515
+    ],
+    [
+        7,
+        266.87146652147294,
+        30.59853347852708,
+        8159.608927607222
+    ],
+    [
+        8,
+        267.8722345209285,
+        29.597765479071555,
+        7892.737461085749
+    ],
+    [
+        9,
+        268.87675540038197,
+        28.593244599618075,
+        7624.86522656482
+    ],
+    [
+        10,
+        269.8850432331334,
+        27.584956766866643,
+        7355.988471164438
+    ],
+    [
+        11,
+        270.89711214525767,
+        26.57288785474239,
+        7086.103427931304
+    ],
+    [
+        12,
+        271.9129763158023,
+        25.557023684197674,
+        6815.206315786047
+    ],
+    [
+        13,
+        272.9326499769866,
+        24.537350023013413,
+        6543.293339470244
+    ],
+    [
+        14,
+        273.95614741440033,
+        23.513852585599714,
+        6270.360689493257
+    ],
+    [
+        15,
+        274.98348296720434,
+        22.486517032795714,
+        5996.404542078857
+    ],
+    [
+        16,
+        276.01467102833135,
+        21.455328971668695,
+        5721.4210591116525
+    ],
+    [
+        17,
+        277.0497260446876,
+        20.420273955312453,
+        5445.406388083321
+    ],
+    [
+        18,
+        278.08866251735515,
+        19.381337482644877,
+        5168.356662038634
+    ],
+    [
+        19,
+        279.13149500179526,
+        18.338504998204794,
+        4890.267999521278
+    ],
+    [
+        20,
+        280.17823810805197,
+        17.291761891948063,
+        4611.136504519483
+    ],
+    [
+        21,
+        281.2289065009572,
+        16.24109349904287,
+        4330.958266411431
+    ],
+    [
+        22,
+        282.2835149003358,
+        15.186485099664278,
+        4049.729359910474
+    ],
+    [
+        23,
+        283.342078081212,
+        14.127921918788019,
+        3767.4458450101383
+    ],
+    [
+        24,
+        284.40461087401656,
+        13.065389125983472,
+        3484.1037669289262
+    ],
+    [
+        25,
+        285.4711281647941,
+        11.998871835205911,
+        3199.6991560549095
+    ],
+    [
+        26,
+        286.5416448954121,
+        10.928355104587933,
+        2914.2280278901153
+    ],
+    [
+        27,
+        287.6161760637699,
+        9.853823936230137,
+        2627.6863829947033
+    ],
+    [
+        28,
+        288.69473672400903,
+        8.775263275991001,
+        2340.0702069309336
+    ],
+    [
+        29,
+        289.7773419867241,
+        7.692658013275967,
+        2051.3754702069245
+    ],
+    [
+        30,
+        290.86400701917427,
+        6.605992980825752,
+        1761.5981282202006
+    ],
+    [
+        31,
+        291.95474704549616,
+        5.515252954503849,
+        1470.7341212010263
+    ],
+    [
+        32,
+        293.0495773469168,
+        4.420422653083238,
+        1178.7793741555301
+    ],
+    [
+        33,
+        294.1485132619677,
+        3.3214867380323003,
+        885.7297968086134
+    ],
+    [
+        34,
+        295.2515701867001,
+        2.218429813299921,
+        591.5812835466456
+    ],
+    [
+        35,
+        296.35876357490025,
+        1.1112364250997957,
+        296.3297133599455
+    ],
+    [
+        36,
+        297.4701089383061,
+        0,
+        0
+    ]
+]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2014-09-26 Fri&gt;</span></span></p>
+<p class="author">Author: Peter Moresi</p>
+<p class="date">Created: 2014-11-04 Tue 08:29</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
